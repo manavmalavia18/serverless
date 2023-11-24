@@ -1,7 +1,7 @@
 name: Upload Lambda to S3
 
 on:
-  pull request
+  [pull request]
 
 jobs:
   deploy:
@@ -13,7 +13,7 @@ jobs:
 
     - name: Package Lambda Function
       run: |
-        zip -r lambda_function.zip .  # Replace with your actual Lambda packaging commands
+        zip -r lambda_function.zip . 
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
