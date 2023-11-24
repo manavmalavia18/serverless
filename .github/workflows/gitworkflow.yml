@@ -11,6 +11,14 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
+    - name: Setting up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+    - name: Install Dependencies
+      run: npm install
+
     - name: Package Lambda Function
       run: |
         zip -r lambda_function.zip .  # Replace with your actual Lambda packaging commands
