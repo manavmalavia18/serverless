@@ -8,28 +8,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    - name: Setting up Node.js
+      - name: Setting up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
 
-    - name: Install Dependencies
-      run: npm install
+      - name: Install Dependencies
+        run: npm install
 
-    - name: Package Lambda Function
-      run: |
-        zip -r lambda_function.zip .  # Replace with your actual Lambda packaging commands
+      - name: Package Lambda Function
+        run: |
+          zip -r lambda_function.zip .  # Replace with your actual Lambda packaging commands
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.ACCESS_KEY_DEMO }}
-        aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEMO }}
-        aws-region: us-west-2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_DEMO }}
+          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEMO }}
+          aws-region: us-west-2
 
-    - name: Upload to S3
-      run: |
-        aws s3 cp lambda_function.zip s3://webapp-lambda/lambda_function.zip
+      - name: Upload to S3
+        run: |
+          aws s3 cp lambda_function.zip s3://webapp-lambda/lambda_function.zip
