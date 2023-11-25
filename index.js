@@ -31,7 +31,7 @@ const gcpServiceKey = JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY);
 const storage = new Storage({
     credentials: gcpServiceKey
 });
-const bucketName = 'webappbucket_manav'; // Replace with your GCP bucket name
+const bucketName = process.env.BUCKET_NAME; 
 
 const downloadAndUploadToGCS = async (url, gcsFileName) => {
     try {
@@ -43,7 +43,7 @@ const downloadAndUploadToGCS = async (url, gcsFileName) => {
 
         const file = storage.bucket(bucketName).file(gcsFileName).createWriteStream({
             metadata: {
-                contentType: 'application/zip' // Adjust content type if necessary
+                contentType: 'application/zip' 
             }
         });
 
@@ -78,7 +78,7 @@ exports.handler = async (event) => {
     await sendMail(sender_email, receiver_email, email_subject, email_body);
 
     try {
-        const gcsFileName = 'webappbucket_manav/webapp'; 
+        const gcsFileName = `${bucketName}/webapp`;
         const message = await downloadAndUploadToGCS(submissionUrl, gcsFileName);
         console.log(message);
     } catch (error) {
