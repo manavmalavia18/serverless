@@ -3,7 +3,11 @@ const Mailgun = require('mailgun.js');
 const mailgun = new Mailgun(formData);
 const { Storage } = require('@google-cloud/storage');
 const axios = require('axios');
+const AWS = require('aws-sdk');
+const { v4: uuidv4 } = require('uuid');
 
+
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 const mg = mailgun.client({
     username: 'api',
@@ -24,6 +28,20 @@ const sendMail = async (sender_email, receiver_email, email_subject, email_body)
         console.log(body);
     } catch (error) {
         console.error(error);
+    }
+};
+const logEmailDetailsToDynamoDB = async (emailDetails) => {
+    const tableName = process.env.DYNAMODB_TABLE_NAME; // Retrieve the DynamoDB table name from environment variables
+
+    try {
+        await dynamoDb.put({
+            TableName: tableName,
+            Item: emailDetails
+        }).promise();
+        console.log('Email details saved to DynamoDB');
+    } catch (error) {
+        console.error('Error saving email details to DynamoDB:', error);
+        throw error;
     }
 };
 
@@ -89,6 +107,15 @@ exports.handler = async (event) => {
     try {
         const gcsFileName = `${bucketName}/webapp`;
         const message = await downloadAndUploadToGCS(submissionUrl, gcsFileName);
+        const emailDetails = {
+            id: uuidv4(), // Generate a unique ID
+            sender_email: sender_email,
+            receiver_email: receiver_email,
+            email_subject: email_subject,
+            email_body: email_body,
+        };
+        
+        await logEmailDetailsToDynamoDB(emailDetails);
         console.log(message);
     } catch (error) {
         console.error('Error handling file:', error);
