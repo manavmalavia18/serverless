@@ -6,6 +6,11 @@ const axios = require('axios');
 const AWS = require('aws-sdk');
 const { v4: uuidv4 } = require('uuid');
 
+AWS.config.update({
+    region: 'us-west-2',
+    accessKeyId: process.env.AWS_ACCESSKEY, 
+    secretAccessKey: process.env.AWS_SECRET_ACCESSKEY 
+});
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -31,7 +36,8 @@ const sendMail = async (sender_email, receiver_email, email_subject, email_body)
     }
 };
 const logEmailDetailsToDynamoDB = async (emailDetails) => {
-    const tableName = process.env.DYNAMODB_TABLE_NAME; // Retrieve the DynamoDB table name from environment variables
+    const tableName = process.env.DYNAMODB_TABLE_NAME;
+    console.log('Attempting to save to DynamoDB table:', tableName); // Retrieve the DynamoDB table name from environment variables
 
     try {
         await dynamoDb.put({
@@ -108,7 +114,7 @@ exports.handler = async (event) => {
         const gcsFileName = `${bucketName}/webapp`;
         const message = await downloadAndUploadToGCS(submissionUrl, gcsFileName);
         const emailDetails = {
-            id: uuidv4(), // Generate a unique ID
+            id: uuidv4(), 
             sender_email: sender_email,
             receiver_email: receiver_email,
             email_subject: email_subject,
