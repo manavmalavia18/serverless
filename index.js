@@ -71,7 +71,16 @@ exports.handler = async (event) => {
 
     let sender_email = 'mailgun@manavmalavia.me'; 
     let email_subject = 'Mailgun Test';
-    let email_body = 'Data received from SNS';
+    let email_body = `Hello there!
+
+    Your recent assignment submission was successful - it's now safely stored in our digital vaults. 
+    
+    Fun fact: Did you know that your assignment was so bright, it turned off the dark mode on our server? 😉
+    
+    Keep up the great work, and if you have any more brilliant submissions, you know where to send them!
+    
+    Cheers,
+    The Friendly Team at ManavMalavia.me`;
 
 
 
