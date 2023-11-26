@@ -21,7 +21,7 @@ jobs:
 
       - name: Package Lambda Function
         run: |
-          zip -r lambda_function.zip .  # Replace with your actual Lambda packaging commands
+          zip -r lambda_function.zip .
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -33,3 +33,7 @@ jobs:
       - name: Upload to S3
         run: |
           aws s3 cp lambda_function.zip s3://webapp-lambda/lambda_function.zip
+
+      - name: Set S3 Bucket to Public
+        run: |
+          aws s3api put-bucket-policy --bucket webapp-lambda --policy file://s3_bucket_policy.json
