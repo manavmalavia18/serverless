@@ -33,17 +33,3 @@ jobs:
       - name: Upload to S3
         run: |
           aws s3 cp lambda_function.zip s3://webapp-lambda/lambda_function.zip
-
-      - name: Set S3 Bucket to Public
-        run: |
-          aws s3api put-bucket-policy --bucket webapp-lambda --policy '{
-            "Version":"2012-10-17",
-            "Statement":[
-              {
-                "Effect":"Allow",
-                "Principal":"*",
-                "Action":"s3:GetObject",
-                "Resource":"arn:aws:s3:::webapp-lambda/*"
-              }
-            ]
-          }'
