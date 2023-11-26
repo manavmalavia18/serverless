@@ -23,7 +23,7 @@ jobs:
         run: |
           zip -r lambda_function.zip .
 
-      # Configure AWS Credentials for Demo Account
+      
       - name: Configure AWS Credentials for Demo
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -31,17 +31,25 @@ jobs:
           aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEMO }}
           aws-region: us-west-2
 
+      - name: Create S3 Bucket in Demo (if not exists)
+        run: |
+          aws s3 mb s3://webapp-lambda-demo || true
+
       - name: Upload to S3 Demo
         run: |
           aws s3 cp lambda_function.zip s3://webapp-lambda-demo/lambda_function.zip
 
-      # Configure AWS Credentials for Dev Account
+      
       - name: Configure AWS Credentials for Dev
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY}}
-          aws-region: us-west-2 # or your Dev account's region
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_DEV }}
+          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEV }}
+          aws-region: us-west-2 
+
+      - name: Create S3 Bucket in Dev (if not exists)
+        run: |
+          aws s3 mb s3://webapp-lambda-dev || true
 
       - name: Upload to S3 Dev
         run: |
