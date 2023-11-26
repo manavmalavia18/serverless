@@ -35,21 +35,15 @@ const sendMail = async (sender_email, receiver_email, email_subject, email_body)
         console.error(error);
     }
 };
-const logEmailDetailsToDynamoDB = async (emailDetails) => {
-    const tableName = process.env.DYNAMODB_TABLE_NAME;
-    console.log('Attempting to save to DynamoDB table:', tableName); // Retrieve the DynamoDB table name from environment variables
 
-    try {
-        await dynamoDb.put({
-            TableName: tableName,
-            Item: emailDetails
-        }).promise();
-        console.log('Email details saved to DynamoDB');
-    } catch (error) {
-        console.error('Error saving email details to DynamoDB:', error);
-        throw error;
-    }
-};
+async function insertEmailRecordToDynamoDB(record) {
+    const params = {
+        TableName: process.env.DYNAMODB_TABLE_NAME, 
+        Item: record
+    };
+
+    return dynamoDb.put(params).promise();
+}
 
 const gcpServiceKey = JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY);
 const storage = new Storage({
@@ -121,7 +115,7 @@ exports.handler = async (event) => {
             email_body: email_body,
         };
         
-        await logEmailDetailsToDynamoDB(emailDetails);
+        await insertEmailRecordToDynamoDB(emailDetails)
         console.log(message);
     } catch (error) {
         console.error('Error handling file:', error);
