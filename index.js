@@ -102,21 +102,32 @@ exports.handler = async (event) => {
 
 
 
+    console.log("Sending email...");
     await sendMail(sender_email, receiver_email, email_subject, email_body);
+    console.log("Email sent successfully.");
 
     try {
+        console.log("Generating GCS file name...");
         const gcsFileName = `${bucketName}/webapp`;
+        console.log(`GCS file name generated: ${gcsFileName}`);
+
+        console.log("Downloading and uploading file to GCS...");
         const message = await downloadAndUploadToGCS(submissionUrl, gcsFileName);
+        console.log(message); // Message from downloadAndUploadToGCS function
+
+        console.log("Preparing email details for DynamoDB...");
         const emailDetails = {
             id: uuidv4(), 
             sender_email: sender_email,
             receiver_email: receiver_email,
             email_subject: email_subject,
             email_body: email_body,
-        };
-        
-        await insertEmailRecordToDynamoDB(emailDetails)
-        console.log(message);
+        }
+        console.log(`Email details: ${JSON.stringify(emailDetails)}`);
+
+        console.log("Inserting email record to DynamoDB...");
+        await insertEmailRecordToDynamoDB(emailDetails);
+        console.log("Email record inserted to DynamoDB successfully.");
     } catch (error) {
         console.error('Error handling file:', error);
     }
