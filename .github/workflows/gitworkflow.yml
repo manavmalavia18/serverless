@@ -33,4 +33,3 @@ jobs:
       - name: Upload to S3
         run: |
           aws s3 cp lambda_function.zip s3://webapp-lambda/lambda_function.zip
-
