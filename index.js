@@ -59,26 +59,31 @@ const downloadAndUploadToGCS = async (url, gcsFileName) => {
             responseType: 'stream'
         });
 
+        const contentType = response.headers['content-type'];
+        if (contentType !== 'application/zip') {
+            throw new Error('File is not a ZIP');
+        }
+
+        const contentLength = response.headers['content-length'];
+        if (parseInt(contentLength) === 0) {
+            throw new Error('File size is 0 bytes');
+        }
+
         const file = storage.bucket(bucketName).file(gcsFileName).createWriteStream({
-            metadata: {
-                contentType: 'application/zip' 
-            }
+            metadata: { contentType }
         });
 
         return new Promise((resolve, reject) => {
             response.data.pipe(file)
-                .on('finish', () => {
-                    resolve(`File uploaded to ${gcsFileName} in bucket ${bucketName}`);
-                })
-                .on('error', (error) => {
-                    reject(`Error uploading to ${gcsFileName}: ${error}`);
-                });
+                .on('finish', () => resolve(`File uploaded to ${gcsFileName} in bucket ${bucketName}`))
+                .on('error', (error) => reject(`Error uploading to ${gcsFileName}: ${error}`));
         });
     } catch (error) {
         console.error('Error downloading file:', error);
         throw error;
     }
 };
+
 exports.handler = async (event) => {
     console.log("Received SNS event:", JSON.stringify(event, null, 2));
 
@@ -113,7 +118,7 @@ exports.handler = async (event) => {
 
         console.log("Downloading and uploading file to GCS...");
         const message = await downloadAndUploadToGCS(submissionUrl, gcsFileName);
-        console.log(message); // Message from downloadAndUploadToGCS function
+        console.log(message); 
 
         console.log("Preparing email details for DynamoDB...");
         const emailDetails = {
@@ -130,5 +135,12 @@ exports.handler = async (event) => {
         console.log("Email record inserted to DynamoDB successfully.");
     } catch (error) {
         console.error('Error handling file:', error);
+        if (error.message === 'File is not a ZIP' || error.message === 'File size is 0 bytes') {
+            const errorSubject = 'Error with Your Submission';
+            const errorBody = `Hello, there was an error with your file submission: ${error.message}`;
+            await sendMail(sender_email, receiver_email, errorSubject, errorBody);
+            console.log("Notification email sent to receiver about the error.");
+        }
+    
     }
 };
