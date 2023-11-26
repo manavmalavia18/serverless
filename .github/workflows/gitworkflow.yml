@@ -36,4 +36,14 @@ jobs:
 
       - name: Set S3 Bucket to Public
         run: |
-          aws s3api put-bucket-policy --bucket webapp-lambda --policy file://s3_bucket_policy.json
+          aws s3api put-bucket-policy --bucket webapp-lambda --policy '{
+            "Version":"2012-10-17",
+            "Statement":[
+              {
+                "Effect":"Allow",
+                "Principal":"*",
+                "Action":"s3:GetObject",
+                "Resource":"arn:aws:s3:::webapp-lambda/*"
+              }
+            ]
+          }'
