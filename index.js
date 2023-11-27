@@ -84,6 +84,7 @@ const downloadAndUploadToGCS = async (url, gcsFileName) => {
     }
 };
 
+
 exports.handler = async (event) => {
     console.log("Received SNS event:", JSON.stringify(event, null, 2));
 
@@ -99,21 +100,6 @@ exports.handler = async (event) => {
     const submissionTime = snsMessage.submissionTime;
 
     let sender_email = 'mailgun@manavmalavia.me'; 
-    let email_subject = 'Mailgun Test';
-    let email_body = `Hello there!
-
-    Your recent assignment submission was successful - it's now safely stored in our digital vaults. 
-    
-    Fun fact: Did you know that your assignment was so bright, it turned off the dark mode on our server? 😉
-    
-    Keep up the great work, and if you have any more brilliant submissions, you know where to send them!
-    
-    Cheers,
-    The Friendly Team at ManavMalavia.me`;
-
-    console.log("Sending email...");
-    await sendMail(sender_email, receiver_email, email_subject, email_body);
-    console.log("Email sent successfully.");
 
     try {
         console.log("Generating GCS file name...");
@@ -124,6 +110,23 @@ exports.handler = async (event) => {
         console.log("Downloading and uploading file to GCS...");
         const message = await downloadAndUploadToGCS(submissionUrl, gcsFileName);
         console.log(message); 
+
+        // Send success email after successful upload
+        let email_subject = 'Mailgun Test';
+        let email_body = `Hello there!
+
+        Your recent assignment submission was successful - it's now safely stored in our digital vaults. 
+        
+        Fun fact: Did you know that your assignment was so bright, it turned off the dark mode on our server? 😉
+        
+        Keep up the great work, and if you have any more brilliant submissions, you know where to send them!
+        
+        Cheers,
+        The Friendly Team at ManavMalavia.me`;
+
+        console.log("Sending success email...");
+        await sendMail(sender_email, receiver_email, email_subject, email_body);
+        console.log("Success email sent successfully.");
 
         console.log("Preparing email details for DynamoDB...");
         const emailDetails = {
@@ -138,14 +141,14 @@ exports.handler = async (event) => {
         console.log("Inserting email record to DynamoDB...");
         await insertEmailRecordToDynamoDB(emailDetails);
         console.log("Email record inserted to DynamoDB successfully.");
+
     } catch (error) {
         console.error('Error handling file:', error);
-        if (error.message === 'File is not a ZIP' || error.message === 'File size is 0 bytes') {
-            const errorSubject = 'Error with Your Submission';
-            const errorBody = `Hello, there was an error with your file submission: ${error.message}`;
-            await sendMail(sender_email, receiver_email, errorSubject, errorBody);
-            console.log("Notification email sent to receiver about the error.");
-        }
-    
+
+        const errorSubject = 'Error with Your Submission';
+        const errorBody = `Hello, there was an error with your file submission: ${error.message}. Please ensure your file is a ZIP and is not empty before resubmitting.`;
+        await sendMail(sender_email, receiver_email, errorSubject, errorBody);
+        console.log("Error notification email sent to receiver.");
     }
-};
+}
+
