@@ -92,6 +92,12 @@ exports.handler = async (event) => {
     const receiver_email = snsMessage.userEmail;  
     const submissionUrl = snsMessage.submission_url; 
 
+    // Extracting additional details from the SNS message
+    const firstName = snsMessage.firstName;
+    const lastName = snsMessage.lastName;
+    const assignmentName = snsMessage.assignmentName;
+    const submissionTime = snsMessage.submissionTime;
+
     let sender_email = 'mailgun@manavmalavia.me'; 
     let email_subject = 'Mailgun Test';
     let email_body = `Hello there!
@@ -105,15 +111,14 @@ exports.handler = async (event) => {
     Cheers,
     The Friendly Team at ManavMalavia.me`;
 
-
-
     console.log("Sending email...");
     await sendMail(sender_email, receiver_email, email_subject, email_body);
     console.log("Email sent successfully.");
 
     try {
         console.log("Generating GCS file name...");
-        const gcsFileName = `${bucketName}/webapp`;
+        const formattedSubmissionTime = submissionTime.replace(/:/g, '-').replace(/\./g, '-');
+        const gcsFileName = `${bucketName}/webapp/${firstName}_${lastName}_${assignmentName}_${formattedSubmissionTime}`;
         console.log(`GCS file name generated: ${gcsFileName}`);
 
         console.log("Downloading and uploading file to GCS...");
