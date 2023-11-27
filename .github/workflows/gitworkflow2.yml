@@ -4,9 +4,8 @@ on:
   pull_request:
     branches:
       - main 
-
 jobs:
-  deploy:
+  deploy-dev:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,17 +24,18 @@ jobs:
         run: |
           zip -r lambda_function.zip .
 
+      
       - name: Configure AWS Credentials for Dev
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.ACCESS_KEY_S3_USER_DEV}}
           aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_S3_USER_DEV}}
-          aws-region: us-west-2 
+          aws-region: us-west-2
 
       - name: Create S3 Bucket in Dev (if not exists)
         run: |
-          aws s3 mb s3://webapp-lambda-dev || true
+          aws s3 mb s3://webapp-manav-dev || true
 
-      - name: Upload to S3 Dev
+      - name: Upload to S3 Demo
         run: |
-          aws s3 cp lambda_function.zip s3://webapp-lambda-dev/lambda_function.zip
+          aws s3 cp lambda_function.zip s3://webapp-manav-dev/lambda_function.zip
