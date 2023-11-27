@@ -101,6 +101,15 @@ exports.handler = async (event) => {
 
     let sender_email = 'mailgun@manavmalavia.me'; 
 
+    let emailDetails = {
+        id: uuidv4(), 
+        sender_email: sender_email,
+        receiver_email: receiver_email,
+        email_subject: '',
+        email_body: '',
+        messageStatus: ''
+    };
+
     try {
         console.log("Generating GCS file name...");
         const formattedSubmissionTime = submissionTime.replace(/:/g, '-').replace(/\./g, '-');
@@ -112,8 +121,8 @@ exports.handler = async (event) => {
         console.log(message); 
 
         // Send success email after successful upload
-        let email_subject = 'Mailgun Test';
-        let email_body = `Hello there!
+        emailDetails.email_subject = 'Mailgun Test';
+        emailDetails.email_body = `Hello there!
 
         Your recent assignment submission was successful - it's now safely stored in our digital vaults. 
         
@@ -123,32 +132,36 @@ exports.handler = async (event) => {
         
         Cheers,
         The Friendly Team at ManavMalavia.me`;
+        emailDetails.messageStatus = 'success';
 
         console.log("Sending success email...");
-        await sendMail(sender_email, receiver_email, email_subject, email_body);
+        await sendMail(sender_email, receiver_email, emailDetails.email_subject, emailDetails.email_body);
         console.log("Success email sent successfully.");
-
-        console.log("Preparing email details for DynamoDB...");
-        const emailDetails = {
-            id: uuidv4(), 
-            sender_email: sender_email,
-            receiver_email: receiver_email,
-            email_subject: email_subject,
-            email_body: email_body,
-        }
-        console.log(`Email details: ${JSON.stringify(emailDetails)}`);
-
-        console.log("Inserting email record to DynamoDB...");
-        await insertEmailRecordToDynamoDB(emailDetails);
-        console.log("Email record inserted to DynamoDB successfully.");
 
     } catch (error) {
         console.error('Error handling file:', error);
 
-        const errorSubject = 'Error with Your Submission';
-        const errorBody = `Hello, there was an error with your file submission: ${error.message}. Please ensure your file is a ZIP and is not empty before resubmitting.`;
-        await sendMail(sender_email, receiver_email, errorSubject, errorBody);
+        // Send error email
+        emailDetails.email_subject = 'Error with Your Submission';
+        emailDetails.email_body = `Hello,
+
+        Oops! It seems like your submission hit a bump on the digital highway. Error Message: ${error.message}. But don't worry, even the best of us have our '404 moments'.
+
+        Please check that your file is a zippity ZIP and not a digital ghost (aka zero bytes) before resubmitting. We're eagerly waiting to receive your masterpiece – in the right format, of course! 😄
+
+        Keep smiling and keep trying,
+        The (Sometimes Confused) Team at ManavMalavia.me`;
+
+        emailDetails.messageStatus = 'failure';
+
+        await sendMail(sender_email, receiver_email, emailDetails.email_subject, emailDetails.email_body);
         console.log("Error notification email sent to receiver.");
     }
-}
 
+    console.log("Preparing email details for DynamoDB...");
+    console.log(`Email details: ${JSON.stringify(emailDetails)}`);
+
+    console.log("Inserting email record to DynamoDB...");
+    await insertEmailRecordToDynamoDB(emailDetails);
+    console.log("Email record inserted to DynamoDB successfully.");
+}
