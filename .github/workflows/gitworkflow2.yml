@@ -2,6 +2,8 @@ name: Upload Lambda to S3
 
 on:
   pull_request:
+    branches:
+      - main 
 
 jobs:
   deploy:
