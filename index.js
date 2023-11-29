@@ -110,12 +110,12 @@ exports.handler = async (event) => {
         messageStatus: ''
     };
 
-    try {
-        console.log("Generating GCS file name...");
-        const formattedSubmissionTime = submissionTime.replace(/:/g, '-').replace(/\./g, '-');
-        const gcsFileName = `${bucketName}/${firstName}_${lastName}_${assignmentName}_${formattedSubmissionTime}`;
-        console.log(`GCS file name generated: ${gcsFileName}`);
+    console.log("Generating GCS file name...");
+    const formattedSubmissionTime = submissionTime.replace(/:/g, '-').replace(/\./g, '-');
+    const gcsFileName = `${bucketName}/${firstName}_${lastName}_${assignmentName}_${formattedSubmissionTime}`;
+    console.log(`GCS file name generated: ${gcsFileName}`);
 
+    try {
         console.log("Downloading and uploading file to GCS...");
         const message = await downloadAndUploadToGCS(submissionUrl, gcsFileName);
         console.log(message); 
