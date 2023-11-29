@@ -79,7 +79,7 @@ const downloadAndUploadToGCS = async (url, gcsFileName) => {
                 .on('error', (error) => reject(`Error uploading to ${gcsFileName}: ${error}`));
         });
     } catch (error) {
-        console.error('Error downloading file:', error);
+        console.error('Error downloading file: Invalid Url');
         throw error;
     }
 };
@@ -113,7 +113,7 @@ exports.handler = async (event) => {
     try {
         console.log("Generating GCS file name...");
         const formattedSubmissionTime = submissionTime.replace(/:/g, '-').replace(/\./g, '-');
-        const gcsFileName = `${bucketName}/webapp/${firstName}_${lastName}_${assignmentName}_${formattedSubmissionTime}`;
+        const gcsFileName = `${bucketName}/${firstName}_${lastName}_${assignmentName}_${formattedSubmissionTime}`;
         console.log(`GCS file name generated: ${gcsFileName}`);
 
         console.log("Downloading and uploading file to GCS...");
@@ -125,13 +125,16 @@ exports.handler = async (event) => {
         emailDetails.email_body = `Hello there!
 
         Your recent assignment submission was successful - it's now safely stored in our digital vaults. 
-        
+
         Fun fact: Did you know that your assignment was so bright, it turned off the dark mode on our server? 😉
-        
+
         Keep up the great work, and if you have any more brilliant submissions, you know where to send them!
-        
+
         Cheers,
-        The Friendly Team at ManavMalavia.me`;
+        The Friendly Team at ManavMalavia.me
+
+        GCS Bucket File Path: ${gcsFileName}`;
+
         emailDetails.messageStatus = 'success';
 
         console.log("Sending success email...");
@@ -150,7 +153,10 @@ exports.handler = async (event) => {
         Please check that your file is a zippity ZIP and not a digital ghost (aka zero bytes) before resubmitting. We're eagerly waiting to receive your masterpiece – in the right format, of course! 😄
 
         Keep smiling and keep trying,
-        The (Sometimes Confused) Team at ManavMalavia.me`;
+        The (Sometimes Confused) Team at ManavMalavia.me
+
+        GCS Bucket File Path: ${gcsFileName}`;
+
 
         emailDetails.messageStatus = 'failure';
 
