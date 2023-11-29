@@ -135,7 +135,7 @@ exports.handler = async (event) => {
         // Send success email after successful upload
         emailDetails.email_subject = 'Mailgun Test';
         // Simplified Email Body with GCS Filename and Public URL
-        emailDetails.email_body = `Hello ${userEmail},
+        emailDetails.email_body = `Hello ,
 
         I hope this message finds you well. We're pleased to let you know that your recent submission has been successfully received and securely stored.
 
