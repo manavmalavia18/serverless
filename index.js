@@ -133,18 +133,18 @@ exports.handler = async (event) => {
         console.log(`File uploaded, public URL: ${publicUrl}`);
 
         // Send success email after successful upload
-        emailDetails.email_subject = 'Mailgun Test';
-        // Simplified Email Body with GCS Filename and Public URL
-        // Email Body Structured to Avoid Spam Filters
-        // Updated Email Body to Avoid Spam Filters
-        emailDetails.email_body = `Greetings,
+        emailDetails.email_subject = 'Assignment Submission Status- Successfully Submitted';
+    
+        emailDetails.email_body = `Greetings ${firstName},
 
         We're pleased to inform you that your recent submission has been successfully processed and stored.
 
         - Access your submission via this Public URL: ${publicUrl}
+
         - Your Google Cloud Storage Path: ${gcsFileName}
 
-        If you have any questions or require assistance, please don't hesitate to reach out to our support team at noreply@demo.me. We're here to help.
+
+        If you have any questions or require assistance, please don't hesitate to reach out to our support team at noreply@demo.manavmalavia.me. We're here to help.
 
         Your privacy and data security are paramount to us. We adhere to strict privacy policies to ensure that your information is always handled with care.
 
@@ -162,10 +162,9 @@ exports.handler = async (event) => {
     } catch (error) {
         console.error('Error handling file:', error);
 
-        // Send error email
-        emailDetails.email_subject = 'Error with Your Submission';
-        // Revised Email to Avoid Junk Folder
-        emailDetails.email_body = `Hello,
+        emailDetails.email_subject = 'Assignment Submission Status-Error with Your Submission';
+        
+        emailDetails.email_body = `Hello ${firstName},
 
         We have an update regarding your recent submission. An issue was detected: ${error.message}. We are actively working to resolve this.
 
@@ -175,7 +174,7 @@ exports.handler = async (event) => {
 
         Kind regards,
         The Canvas Team`
-        
+
         emailDetails.messageStatus = 'failure';
 
         await sendMail(sender_email, receiver_email, emailDetails.email_subject, emailDetails.email_body);
