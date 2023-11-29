@@ -75,8 +75,11 @@ const downloadAndUploadToGCS = async (url, gcsFileName) => {
 
         return new Promise((resolve, reject) => {
             response.data.pipe(file)
-                .on('finish', () => resolve(`https://storage.googleapis.com/${bucketName}/${gcsFileName}`)) // Returns the public URL
-                .on('error', (error) => reject(`Error uploading to ${gcsFileName}: ${error}`));
+            .on('finish', () => {
+                const encodedGcsFileName = encodeURIComponent(gcsFileName);
+                resolve(`https://storage.googleapis.com/${bucketName}/${encodedGcsFileName}`);
+            })
+            .on('error', (error) => reject(`Error uploading to ${gcsFileName}: ${error}`));
         });
     } catch (error) {
         console.error('Error downloading file: Invalid Url');
