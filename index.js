@@ -75,7 +75,7 @@ const downloadAndUploadToGCS = async (url, gcsFileName) => {
 
         return new Promise((resolve, reject) => {
             response.data.pipe(file)
-                .on('finish', () => resolve(`File uploaded to ${gcsFileName} in bucket ${bucketName}`))
+                .on('finish', () => resolve(`https://storage.googleapis.com/${bucketName}/${gcsFileName}`)) // Returns the public URL
                 .on('error', (error) => reject(`Error uploading to ${gcsFileName}: ${error}`));
         });
     } catch (error) {
@@ -110,21 +110,25 @@ exports.handler = async (event) => {
         messageStatus: ''
     };
 
-    console.log("Generating GCS file name...");
-    const formattedSubmissionTime = submissionTime.replace(/:/g, '-').replace(/\./g, '-');
-    const gcsFileName = `${bucketName}/${firstName}_${lastName}_${assignmentName}_${formattedSubmissionTime}`;
-    console.log(`GCS file name generated: ${gcsFileName}`);
+    
 
     try {
+        console.log("Generating GCS file name...");
+        const formattedSubmissionTime = submissionTime.replace(/:/g, '-').replace(/\./g, '-');
+        const gcsFileName = `${bucketName}/${firstName}_${lastName}_${assignmentName}_${formattedSubmissionTime}`;
+        console.log(`GCS file name generated: ${gcsFileName}`);
+        
         console.log("Downloading and uploading file to GCS...");
-        const message = await downloadAndUploadToGCS(submissionUrl, gcsFileName);
-        console.log(message); 
+        const publicUrl = await downloadAndUploadToGCS(submissionUrl, gcsFileName);
+        console.log(`File uploaded, public URL: ${publicUrl}`);
 
         // Send success email after successful upload
         emailDetails.email_subject = 'Mailgun Test';
         emailDetails.email_body = `Hello there!
 
         Your recent assignment submission was successful - it's now safely stored in our digital vaults. 
+
+        Here's the public URL to access your submission: ${publicUrl}
 
         Fun fact: Did you know that your assignment was so bright, it turned off the dark mode on our server? 😉
 
@@ -153,9 +157,7 @@ exports.handler = async (event) => {
         Please check that your file is a zippity ZIP and not a digital ghost (aka zero bytes) before resubmitting. We're eagerly waiting to receive your masterpiece – in the right format, of course! 😄
 
         Keep smiling and keep trying,
-        The (Sometimes Confused) Team at ManavMalavia.me
-
-        GCS Bucket File Path: ${gcsFileName}`;
+        The (Sometimes Confused) Team at ManavMalavia.me`;
 
 
         emailDetails.messageStatus = 'failure';
