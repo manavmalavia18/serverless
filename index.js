@@ -135,22 +135,23 @@ exports.handler = async (event) => {
         // Send success email after successful upload
         emailDetails.email_subject = 'Mailgun Test';
         // Simplified Email Body with GCS Filename and Public URL
-        emailDetails.email_body = `Hello ,
+        // Email Body Structured to Avoid Spam Filters
+        // Updated Email Body to Avoid Spam Filters
+        emailDetails.email_body = `Greetings,
 
-        I hope this message finds you well. We're pleased to let you know that your recent submission has been successfully received and securely stored.
+        We're pleased to inform you that your recent submission has been successfully processed and stored.
 
-        Here's the link to access your submission: ${publicUrl}
-        And this is your Google Cloud Storage (GCS) path for the submission: ${gcsFileName}
+        - Access your submission via this Public URL: ${publicUrl}
+        - Your Google Cloud Storage Path: ${gcsFileName}
 
-        Should you have any questions or need assistance, our dedicated support team is ready to help at noreply@demo.me.
+        If you have any questions or require assistance, please don't hesitate to reach out to our support team at noreply@demo.me. We're here to help.
 
-        Your privacy and the security of your data are our top priorities. Rest assured, we handle your personal information with the utmost care and confidentiality.
+        Your privacy and data security are paramount to us. We adhere to strict privacy policies to ensure that your information is always handled with care.
 
-        Thank you for being a valued member of our community.
+        Thank you for choosing our platform for your academic needs.
 
         Best regards,
-        The Canvas Team`;
-
+        The Canvas Team`
 
         emailDetails.messageStatus = 'success';
 
@@ -163,17 +164,18 @@ exports.handler = async (event) => {
 
         // Send error email
         emailDetails.email_subject = 'Error with Your Submission';
+        // Revised Email to Avoid Junk Folder
         emailDetails.email_body = `Hello,
 
-        We regret to inform you that there was an issue with your recent submission. Error Message: ${error.message}. We assure you that resolving this is our priority.
+        We have an update regarding your recent submission. An issue was detected: ${error.message}. We are actively working to resolve this.
 
-        Please verify that your submission file is correctly formatted as a ZIP file and that it is not empty (i.e., not zero bytes) before resubmitting. Prompt attention to this matter will ensure your work is processed efficiently.
+        To assist in this process, please ensure your submission file is a ZIP format and not empty before resubmitting. This will aid in efficient processing.
 
-        We appreciate your cooperation and look forward to your corrected submission.
+        Your cooperation is greatly appreciated, and we are eager to receive your corrected submission.
 
-        Sincerely,
-        The Canvas Team`;
-
+        Kind regards,
+        The Canvas Team`
+        
         emailDetails.messageStatus = 'failure';
 
         await sendMail(sender_email, receiver_email, emailDetails.email_subject, emailDetails.email_body);
