@@ -136,18 +136,21 @@ exports.handler = async (event) => {
         emailDetails.email_subject = 'Mailgun Test';
         emailDetails.email_body = `Hello there!
 
-        Your recent assignment submission was successful - it's now safely stored in our digital vaults. 
+        I hope this email finds you well. We've received your recent assignment submission and it's now securely stored. However, there's a small issue that needs your attention.
 
-        Here's the public URL to access your submission: ${publicUrl}
+        Unfortunately, the URL provided did not point to a valid ZIP file. Please resubmit the correct URL to ensure your assignment is properly processed. Here's the public URL to access your submission: ${publicUrl}
 
-        Fun fact: Did you know that your assignment was so bright, it turned off the dark mode on our server? 😉
+        We appreciate your prompt response to this matter. If you have any questions or need assistance, feel free to reach out to our support team.
 
-        Keep up the great work, and if you have any more brilliant submissions, you know where to send them!
+        Your privacy and the security of your data are top priorities for us. We assure you that your personal information is handled with utmost care and confidentiality.
+
+        Thank you for being a part of our community. We look forward to receiving your corrected submission and are excited to see more of your brilliant work in the future.
 
         Cheers,
-        The Friendly Team at ManavMalavia.me
+        The Canvas Team
 
-        GCS Bucket File Path: ${gcsFileName}`;
+        For your reference, your submission is stored at the following GCS Bucket File Path: ${gcsFileName}`;
+
 
         emailDetails.messageStatus = 'success';
 
@@ -162,12 +165,14 @@ exports.handler = async (event) => {
         emailDetails.email_subject = 'Error with Your Submission';
         emailDetails.email_body = `Hello,
 
-        Oops! It seems like your submission hit a bump on the digital highway. Error Message: ${error.message}. But don't worry, even the best of us have our '404 moments'.
+        We regret to inform you that there was an issue with your recent submission. Error Message: ${error.message}. We assure you that resolving this is our priority.
 
-        Please check that your file is a zippity ZIP and not a digital ghost (aka zero bytes) before resubmitting. We're eagerly waiting to receive your masterpiece – in the right format, of course! 😄
+        Please verify that your submission file is correctly formatted as a ZIP file and that it is not empty (i.e., not zero bytes) before resubmitting. Prompt attention to this matter will ensure your work is processed efficiently.
 
-        Keep smiling and keep trying,
-        The (Sometimes Confused) Team at ManavMalavia.me`;
+        We appreciate your cooperation and look forward to your corrected submission.
+
+        Sincerely,
+        The Canvas Team`;
 
         emailDetails.messageStatus = 'failure';
 
