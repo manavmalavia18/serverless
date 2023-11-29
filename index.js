@@ -125,7 +125,7 @@ exports.handler = async (event) => {
     try {
         console.log("Generating GCS file name...");
         const formattedSubmissionTime = submissionTime.replace(/:/g, '-').replace(/\./g, '-');
-        const gcsFileName = `${bucketName}/${firstName}_${lastName}_${assignmentName}_${formattedSubmissionTime}`;
+        const gcsFileName = `${firstName}_${lastName}_${assignmentName}_${formattedSubmissionTime}`;
         console.log(`GCS file name generated: ${gcsFileName}`);
         
         console.log("Downloading and uploading file to GCS...");
@@ -140,7 +140,7 @@ exports.handler = async (event) => {
         We're pleased to inform you that your recent submission has been successfully processed and stored.
 
 
-        - Your Google Cloud Storage Path: ${gcsFileName}
+        - Your Google Cloud Storage Path: '${bucketName}/${gcsFileName}'
 
 
         If you have any questions or require assistance, please don't hesitate to reach out to our support team . We're here to help.
