@@ -22,7 +22,7 @@ const mg = mailgun.client({
 
 const sendMail = async (sender_email, receiver_email, email_subject, email_body) => {
     const data = {
-        from: sender_email,
+        from: `Webapp API <${sender_email}>`,
         to: receiver_email,
         subject: email_subject,
         text: email_body
@@ -139,12 +139,11 @@ exports.handler = async (event) => {
 
         We're pleased to inform you that your recent submission has been successfully processed and stored.
 
-        - Access your submission via this Public URL: ${publicUrl}
 
         - Your Google Cloud Storage Path: ${gcsFileName}
 
 
-        If you have any questions or require assistance, please don't hesitate to reach out to our support team at noreply@demo.manavmalavia.me. We're here to help.
+        If you have any questions or require assistance, please don't hesitate to reach out to our support team at noreply@manavmalavia.me. We're here to help.
 
         Your privacy and data security are paramount to us. We adhere to strict privacy policies to ensure that your information is always handled with care.
 
