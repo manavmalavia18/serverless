@@ -82,10 +82,17 @@ const downloadAndUploadToGCS = async (url, gcsFileName) => {
             .on('error', (error) => reject(`Error uploading to ${gcsFileName}: ${error}`));
         });
     } catch (error) {
-        console.error('Error downloading file: Invalid Url');
-        throw error;
+        if (error.message === 'File is not a ZIP' || error.message === 'File size is 0 bytes') {
+            console.error('Error downloading file:', error.message);
+            throw error;
+        } else {
+            console.error('Error downloading file: Invalid Url');
+            throw new Error('Invalid Url');
+        }
     }
 };
+
+
 
 
 exports.handler = async (event) => {
@@ -161,7 +168,6 @@ exports.handler = async (event) => {
 
         Keep smiling and keep trying,
         The (Sometimes Confused) Team at ManavMalavia.me`;
-
 
         emailDetails.messageStatus = 'failure';
 
