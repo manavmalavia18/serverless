@@ -143,7 +143,7 @@ exports.handler = async (event) => {
         - Your Google Cloud Storage Path: ${gcsFileName}
 
 
-        If you have any questions or require assistance, please don't hesitate to reach out to our support team at noreply@manavmalavia.me. We're here to help.
+        If you have any questions or require assistance, please don't hesitate to reach out to our support team . We're here to help.
 
         Your privacy and data security are paramount to us. We adhere to strict privacy policies to ensure that your information is always handled with care.
 
