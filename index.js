@@ -134,22 +134,22 @@ exports.handler = async (event) => {
 
         // Send success email after successful upload
         emailDetails.email_subject = 'Mailgun Test';
-        emailDetails.email_body = `Hello there!
+        // Simplified Email Body with GCS Filename and Public URL
+        emailDetails.email_body = `Hello ${userEmail},
 
-        I hope this email finds you well. We've received your recent assignment submission and it's now securely stored. However, there's a small issue that needs your attention.
+        I hope this message finds you well. We're pleased to let you know that your recent submission has been successfully received and securely stored.
 
-        Unfortunately, the URL provided did not point to a valid ZIP file. Please resubmit the correct URL to ensure your assignment is properly processed. Here's the public URL to access your submission: ${publicUrl}
+        Here's the link to access your submission: ${publicUrl}
+        And this is your Google Cloud Storage (GCS) path for the submission: ${gcsFileName}
 
-        We appreciate your prompt response to this matter. If you have any questions or need assistance, feel free to reach out to our support team.
+        Should you have any questions or need assistance, our dedicated support team is ready to help at noreply@demo.me.
 
-        Your privacy and the security of your data are top priorities for us. We assure you that your personal information is handled with utmost care and confidentiality.
+        Your privacy and the security of your data are our top priorities. Rest assured, we handle your personal information with the utmost care and confidentiality.
 
-        Thank you for being a part of our community. We look forward to receiving your corrected submission and are excited to see more of your brilliant work in the future.
+        Thank you for being a valued member of our community.
 
-        Cheers,
-        The Canvas Team
-
-        For your reference, your submission is stored at the following GCS Bucket File Path: ${gcsFileName}`;
+        Best regards,
+        The Canvas Team`;
 
 
         emailDetails.messageStatus = 'success';
